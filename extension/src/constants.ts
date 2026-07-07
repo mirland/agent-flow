@@ -208,4 +208,6 @@ export const SYSTEM_CONTENT_PREFIXES = [
   '<system-reminder',
   '<available-deferred-tools',
   '<command-name',
+  '<system_instruction',
+  '<task-notification',
 ] as const

@@ -3,6 +3,16 @@ import type { ConversationMessage } from './types'
 import { appendConversation, asString, asNumber, LABEL_LEN_NAME, LABEL_LEN_TASK, LABEL_LEN_BUBBLE, MAX_BUBBLES } from './types'
 import type { MutableEventState } from './process-event'
 
+const SYSTEM_CONTENT_PREFIXES = [
+  'This session is being continued',
+  '<ide_',
+  '<system-reminder',
+  '<available-deferred-tools',
+  '<command-name',
+  '<system_instruction',
+  '<task-notification',
+]
+
 export function handleMessage(
   payload: Record<string, unknown>,
   currentTime: number,
@@ -19,7 +29,8 @@ export function handleMessage(
     'assistant'
 
   // Rename main agent to the first user message (more recognizable than "orchestrator")
-  if (role === 'user') {
+  const isSystemContent = SYSTEM_CONTENT_PREFIXES.some(prefix => content.startsWith(prefix))
+  if (role === 'user' && !isSystemContent) {
     const msgAgentForName = state.agents.get(agentName)
     if (msgAgentForName && msgAgentForName.isMain && msgAgentForName.name === agentName) {
       const shortName = content.slice(0, LABEL_LEN_NAME).replace(/\n/g, ' ').trim()
