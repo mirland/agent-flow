@@ -3,6 +3,7 @@ import type { ConversationMessage } from './types'
 import { appendConversation, asString, asNumber, LABEL_LEN_NAME, LABEL_LEN_TASK, LABEL_LEN_BUBBLE, MAX_BUBBLES } from './types'
 import type { MutableEventState } from './process-event'
 
+// Keep in sync with extension/src/constants.ts SYSTEM_CONTENT_PREFIXES
 const SYSTEM_CONTENT_PREFIXES = [
   'This session is being continued',
   '<ide_',
