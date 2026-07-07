@@ -334,6 +334,7 @@ export function AgentVisualizer() {
         visible={!!selectedAgent}
         agentName={selectedAgent?.name ?? ''}
         agentState={selectedAgent?.state ?? 'idle'}
+        model={selectedAgent?.model}
         conversation={selectedConversation}
         runtime={selectedAgent?.runtime ?? sessionRuntime}
         onClose={selection.clearAgent}
