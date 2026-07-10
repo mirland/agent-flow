@@ -2,7 +2,6 @@
 
 import { CARD, Z, type AgentState } from '@/lib/agent-types'
 import { COLORS, getStateColor } from '@/lib/colors'
-import { formatModelName } from '@/lib/utils'
 import { TranscriptMessage } from './transcript-message'
 import type { ConversationMessage } from '@/hooks/simulation/types'
 import { PanelHeader, SlidingPanel, stopPropagationHandlers } from './shared-ui'
@@ -12,7 +11,6 @@ interface ChatPanelProps {
   visible: boolean
   agentName: string
   agentState: AgentState
-  model?: string
   conversation: ConversationMessage[]
   runtime?: 'claude' | 'codex'
   onClose: () => void
@@ -22,7 +20,6 @@ export function AgentChatPanel({
   visible,
   agentName,
   agentState,
-  model,
   conversation,
   runtime,
   onClose,
@@ -51,11 +48,6 @@ export function AgentChatPanel({
           <span className="text-[9px] font-mono capitalize" style={{ color: stateColor + '90' }}>
             {agentState}
           </span>
-          {model && (
-            <span className="text-[8px] font-mono" style={{ color: COLORS.textDim }}>
-              {formatModelName(model)}
-            </span>
-          )}
         </PanelHeader>
 
         {/* Messages */}
