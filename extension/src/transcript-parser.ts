@@ -142,9 +142,11 @@ export class TranscriptParser {
 
     const session = sessionId ? this.delegate.getSession(sessionId) : undefined
 
-    // Extract model from assistant messages (updates tokensMax on the frontend)
-    if (session && !session.model && entry.type === 'assistant' && msg.model) {
-      session.model = msg.model
+    // Extract model from assistant messages (updates tokensMax on the frontend).
+    // Per-agent tracking: each agent gets its own model_detected event.
+    if (session && entry.type === 'assistant' && msg.model && !session.modelDetectedAgents.has(agentName)) {
+      session.modelDetectedAgents.add(agentName)
+      if (!session.model) session.model = msg.model
       this.delegate.emit({
         time: this.delegate.elapsed(sessionId),
         type: 'model_detected',

@@ -189,6 +189,8 @@ export interface WatchedSession {
   label: string
   labelSet: boolean
   model: string | null
+  /** Agents that have already had model_detected emitted — prevents duplicate events */
+  modelDetectedAgents: Set<string>
   permissionTimer: NodeJS.Timeout | null
   permissionEmitted: boolean
   contextBreakdown: {
