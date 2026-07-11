@@ -85,15 +85,17 @@ export function drawContextComposition(
   ctx.textAlign = 'center'
   ctx.fillText(`${formatTokens(total)} / ${formatTokens(agent.tokensMax)} tokens`, agent.x, barY + barHeight + CONTEXT_BAR.labelPadding)
 
-  // Segments
+  // Segments — scale proportionally so they fit within the corrected fill area
+  // (segment values are cumulative breakdown estimates, total may be authoritative)
   const segments = contextSegments(bd)
+  const cumulativeSum = segments.reduce((s, seg) => s + seg.value, 0) || 1
 
   let x = barX
-  const maxWidth = barWidth * (total / agent.tokensMax)
+  const maxWidth = barWidth * Math.min(1, total / agent.tokensMax)
 
   for (const seg of segments) {
     if (seg.value <= 0) continue
-    const segWidth = (seg.value / total) * maxWidth
+    const segWidth = (seg.value / cumulativeSum) * maxWidth
     ctx.fillStyle = seg.color
     ctx.fillRect(x, barY, segWidth, barHeight)
     x += segWidth
@@ -135,13 +137,15 @@ export function drawContextRing(
   ctx.lineWidth = ringW
   ctx.stroke()
 
-  // Filled segments
+  // Filled segments — scale proportionally so total arc matches corrected fill
   const segments = contextSegments(bd)
+  const cumulativeSum = segments.reduce((s, seg) => s + seg.value, 0) || 1
+  const fillRatio = Math.min(1, total / agent.tokensMax)
 
   let currentAngle = startAngle
   for (const seg of segments) {
     if (seg.value <= 0) continue
-    const sweep = (seg.value / agent.tokensMax) * Math.PI * 2
+    const sweep = (seg.value / cumulativeSum) * fillRatio * Math.PI * 2
     ctx.beginPath()
     ctx.arc(agent.x, agent.y, ringR, currentAngle, currentAngle + sweep)
     ctx.strokeStyle = seg.color

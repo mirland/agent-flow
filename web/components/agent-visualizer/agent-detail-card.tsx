@@ -60,7 +60,7 @@ export function AgentDetailCard({
         <div className="flex justify-between mb-1">
           <span className="text-[10px]" style={{ color: COLORS.textMuted }}>Context</span>
           <span className="text-[10px] font-mono" style={{ color: COLORS.textDim }}>
-            {formatTokens(agent.tokensUsed)} / {formatTokens(agent.tokensMax)} ({contextPercent}%)
+            {formatTokens(agent.contextWindowTokens ?? agent.tokensUsed)} / {formatTokens(agent.tokensMax)} ({contextPercent}%)
           </span>
         </div>
         <ProgressBar percent={contextPercent} color={stateColor} />

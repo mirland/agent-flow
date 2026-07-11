@@ -505,6 +505,15 @@ export class TranscriptParser {
           if (entry.type === 'assistant' && entry.message?.model && !session.model) {
             session.model = entry.message.model
           }
+          // Extract authoritative context fill so the gauge is correct on reconnect
+          // (mirrors the extraction in processTranscriptLine for live events)
+          if (entry.type === 'assistant') {
+            const raw = entry as unknown as Record<string, unknown>
+            const usage = raw.usage
+            if (isRecord(usage) && typeof usage.input_tokens === 'number' && usage.input_tokens > 0) {
+              session.lastReportedTokens = usage.input_tokens
+            }
+          }
           // Collect emittable entries (user and assistant turns)
           if (entry.type === 'user' || entry.type === 'assistant') {
             catchUpEntries.push(entry)
