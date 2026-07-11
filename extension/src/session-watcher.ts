@@ -117,6 +117,14 @@ export class SessionWatcher implements AgentSessionWatcher {
         },
       }, sessionId)
 
+      for (const [agent, model] of session.modelDetectedAgents) {
+        this.emit({
+          time: 0,
+          type: 'model_detected',
+          payload: { agent, model },
+        }, sessionId)
+      }
+
       for (const [, sub] of session.subagentWatchers) {
         sub.spawnEmitted = false
       }
@@ -395,7 +403,7 @@ export class SessionWatcher implements AgentSessionWatcher {
       label: defaultLabel,
       labelSet: false,
       model: null,
-      modelDetectedAgents: new Set(),
+      modelDetectedAgents: new Map(),
       permissionTimer: null,
       permissionEmitted: false,
       contextBreakdown: { systemPrompt: SYSTEM_PROMPT_BASE_TOKENS, userMessages: 0, toolResults: 0, reasoning: 0, subagentResults: 0 },
