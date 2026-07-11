@@ -2,7 +2,7 @@ import * as vscode from 'vscode'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
-import { AgentEvent, SessionInfo, WatchedSession } from './protocol'
+import { AgentEvent, SessionInfo, WatchedSession, buildContextUpdatePayload } from './protocol'
 import {
   INACTIVITY_TIMEOUT_MS, SCAN_INTERVAL_MS, ACTIVE_SESSION_AGE_S, POLL_FALLBACK_MS,
   SESSION_ID_DISPLAY, SYSTEM_PROMPT_BASE_TOKENS, ORCHESTRATOR_NAME,
@@ -398,6 +398,7 @@ export class SessionWatcher implements AgentSessionWatcher {
       permissionTimer: null,
       permissionEmitted: false,
       contextBreakdown: { systemPrompt: SYSTEM_PROMPT_BASE_TOKENS, userMessages: 0, toolResults: 0, reasoning: 0, subagentResults: 0 },
+      lastReportedTokens: undefined,
     }
     this.sessions.set(sessionId, session)
 
@@ -556,18 +557,13 @@ export class SessionWatcher implements AgentSessionWatcher {
     return 0
   }
 
-  /** Emit a context_update event with cumulative token breakdown */
+  /** Emit a context_update event with cumulative token breakdown, plus the
+   *  authoritative contextWindowTokens (from usage.input_tokens) when known. */
   private emitContextUpdate(agentName: string, session: WatchedSession, sessionId?: string): void {
-    const bd = session.contextBreakdown
-    const total = bd.systemPrompt + bd.userMessages + bd.toolResults + bd.reasoning + bd.subagentResults
     this.emit({
       time: this.elapsed(sessionId),
       type: 'context_update',
-      payload: {
-        agent: agentName,
-        tokens: total,
-        breakdown: { ...bd },
-      },
+      payload: buildContextUpdatePayload(agentName, session),
     }, sessionId)
   }
 

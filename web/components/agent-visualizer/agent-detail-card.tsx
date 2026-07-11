@@ -13,6 +13,8 @@ interface AgentDetailCardProps {
     state: AgentState
     tokensUsed: number
     tokensMax: number
+    /** Authoritative context-window fill; falls back to tokensUsed when absent. */
+    contextWindowTokens?: number
     toolCalls: number
     timeAlive: number
     currentTool?: string
@@ -24,7 +26,7 @@ export function AgentDetailCard({
   agent,
   onClose,
 }: AgentDetailCardProps) {
-  const contextPercent = Math.round((agent.tokensUsed / agent.tokensMax) * 100)
+  const contextPercent = Math.round(((agent.contextWindowTokens ?? agent.tokensUsed) / agent.tokensMax) * 100)
   const stateColor = getStateColor(agent.state)
 
   // Fixed position: middle-left of the screen (below message feed panel)

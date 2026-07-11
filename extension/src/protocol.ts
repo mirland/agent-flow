@@ -141,6 +141,33 @@ export function emitSubagentSpawn(
   }, sessionId)
 }
 
+/**
+ * Build the `context_update` event payload for a session.
+ *
+ * Extracted as a pure function (rather than inlined in
+ * `SessionWatcher.emitContextUpdate`) so it can be unit-tested without
+ * instantiating `SessionWatcher`, which requires the `vscode` extension-host
+ * module and cannot be imported under a plain `node:test` runner.
+ *
+ * `tokens`/`breakdown` remain the cumulative token count (unchanged — this
+ * still drives cost display). `contextWindowTokens` is the authoritative
+ * context-fill value from the latest `usage.input_tokens` reported in the
+ * transcript; it is only included when the session has recorded one.
+ */
+export function buildContextUpdatePayload(
+  agentName: string,
+  session: Pick<WatchedSession, 'contextBreakdown' | 'lastReportedTokens'>,
+): Record<string, unknown> {
+  const bd = session.contextBreakdown
+  const total = bd.systemPrompt + bd.userMessages + bd.toolResults + bd.reasoning + bd.subagentResults
+  return {
+    agent: agentName,
+    tokens: total,
+    breakdown: { ...bd },
+    ...(session.lastReportedTokens !== undefined ? { contextWindowTokens: session.lastReportedTokens } : {}),
+  }
+}
+
 // ─── Shared Internal Types ───────────────────────────────────────────────────
 
 /** A tool call that has started but not yet received its result */
@@ -198,6 +225,10 @@ export interface WatchedSession {
     reasoning: number
     subagentResults: number
   }
+  /** Authoritative context fill from the latest `usage.input_tokens` reported
+   *  in the Claude Code transcript. Mirrors Codex's `lastReportedTokens`
+   *  pattern. Undefined until the first assistant entry with usage data. */
+  lastReportedTokens?: number
 }
 
 // ─── Claude Settings Types ──────────────────────────────────────────────────

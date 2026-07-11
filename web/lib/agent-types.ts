@@ -19,6 +19,10 @@ export interface Agent {
   parentId: string | null
   tokensUsed: number
   tokensMax: number
+  /** Authoritative context-window fill from the latest reported `usage.input_tokens`
+   *  (Claude Code) or `last_token_usage.input_tokens` (Codex). Optional — falls back
+   *  to `tokensUsed` when absent (older sessions with no usage data reported). */
+  contextWindowTokens?: number
   contextBreakdown: ContextBreakdown
   toolCalls: number
   timeAlive: number

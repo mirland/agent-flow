@@ -62,7 +62,10 @@ export function drawContextComposition(
   radius: number,
 ) {
   const bd = agent.contextBreakdown
-  const total = agent.tokensUsed
+  // Authoritative context fill (usage.input_tokens) when available; falls
+  // back to the cumulative tokensUsed accumulator for older sessions/runtimes
+  // that don't report it.
+  const total = agent.contextWindowTokens ?? agent.tokensUsed
   if (total <= 0) return
 
   const barWidth = Math.max(CONTEXT_BAR.minWidth, radius * CONTEXT_BAR.widthMultiplier)
@@ -114,7 +117,10 @@ export function drawContextRing(
   time: number,
 ) {
   const bd = agent.contextBreakdown
-  const total = agent.tokensUsed
+  // Authoritative context fill (usage.input_tokens) when available; falls
+  // back to the cumulative tokensUsed accumulator for older sessions/runtimes
+  // that don't report it.
+  const total = agent.contextWindowTokens ?? agent.tokensUsed
   if (total <= 0) return
 
   const usage = total / agent.tokensMax

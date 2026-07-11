@@ -70,12 +70,19 @@ export function handleContextUpdate(
   const tokensMaxOverride = typeof payload.tokensMax === 'number' && payload.tokensMax > 0
     ? payload.tokensMax
     : undefined
+  // Authoritative context-window fill (Claude Code usage.input_tokens); only
+  // set when the payload reports it — leaves the agent's prior value untouched
+  // otherwise (e.g. runtimes/sessions with no usage data).
+  const contextWindowTokens = typeof payload.contextWindowTokens === 'number'
+    ? payload.contextWindowTokens
+    : undefined
   const agent = state.agents.get(agentName)
   if (agent) {
     state.agents.set(agentName, {
       ...agent,
       tokensUsed: tokens,
       tokensMax: tokensMaxOverride ?? agent.tokensMax,
+      contextWindowTokens: contextWindowTokens ?? agent.contextWindowTokens,
       contextBreakdown: breakdown || agent.contextBreakdown,
       state: agent.state === 'complete' ? 'complete' : 'thinking'
     })

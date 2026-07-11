@@ -77,6 +77,7 @@ export function handleAgentSpawn(
     id: name, name, state: 'idle',
     parentId: parentId || null,
     tokensUsed: 0, tokensMax: ctx.getContextWindowSize(model),
+    contextWindowTokens: undefined,
     contextBreakdown: emptyContextBreakdown(),
     toolCalls: 0, timeAlive: 0,
     x, y, vx: 0, vy: 0,

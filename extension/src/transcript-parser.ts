@@ -142,6 +142,16 @@ export class TranscriptParser {
 
     const session = sessionId ? this.delegate.getSession(sessionId) : undefined
 
+    // Extract authoritative context fill from usage.input_tokens (top-level
+    // sibling of `message` in the JSONL entry, matching the Anthropic API
+    // response shape). Defensive typeof guards — never throw on malformed data.
+    if (session && entry.type === 'assistant') {
+      const usage = parsed.usage
+      if (isRecord(usage) && typeof usage.input_tokens === 'number' && usage.input_tokens > 0) {
+        session.lastReportedTokens = usage.input_tokens
+      }
+    }
+
     // Extract model from assistant messages (updates tokensMax on the frontend)
     if (session && !session.model && entry.type === 'assistant' && msg.model) {
       session.model = msg.model

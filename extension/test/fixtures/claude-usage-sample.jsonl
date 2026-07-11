@@ -1,0 +1,4 @@
+{"sessionId":"test-session-usage-0001","type":"assistant","uuid":"uuid-1","message":{"role":"assistant","model":"claude-sonnet-5","content":[{"type":"text","text":"Working on it."}]},"usage":{"input_tokens":649000,"output_tokens":120,"cache_creation_input_tokens":0,"cache_read_input_tokens":500000}}
+{"sessionId":"test-session-usage-0001","type":"user","uuid":"uuid-2","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tool-1","content":"ok"}]}}
+{"sessionId":"test-session-usage-0001","type":"assistant","uuid":"uuid-3","message":{"role":"assistant","content":[{"type":"text","text":"Malformed usage entry."}]},"usage":{"input_tokens":null,"output_tokens":50}}
+{"sessionId":"test-session-usage-0001","type":"assistant","uuid":"uuid-4","message":{"role":"assistant","content":[{"type":"text","text":"After compaction."}]},"usage":{"input_tokens":12000,"output_tokens":80}}
