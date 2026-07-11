@@ -14,6 +14,11 @@ test('formats legacy Claude model ids', () => {
   assert.equal(formatModelName('claude-3-haiku-20240307'), 'Haiku 3')
 })
 
+test('formats additional Claude families declared in the formatter', () => {
+  assert.equal(formatModelName('claude-fable-1-20250101'), 'Fable 1')
+  assert.equal(formatModelName('claude-2-mythos-20250101'), 'Mythos 2')
+})
+
 test('strips Bedrock/Vertex provider prefixes and version suffixes', () => {
   assert.equal(formatModelName('us.anthropic.claude-sonnet-4-20250514-v1:0'), 'Sonnet 4')
   assert.equal(formatModelName('us.anthropic.claude-opus-4-1-20250805-v1:0'), 'Opus 4.1')
